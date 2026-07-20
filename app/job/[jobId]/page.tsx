@@ -11,6 +11,7 @@ import { useJob, useProofEvents } from "@/lib/hooks";
 import { truncateAddress } from "@/lib/wallet";
 import { useWallet } from "@/lib/wallet-context";
 import { escrowContract } from "@/lib/contract";
+import { toast } from "@/lib/toast-store";
 import type { Milestone, MilestoneOnChainStatus } from "@/lib/types";
 
 const nextStatus: Record<string, MilestoneOnChainStatus> = {
@@ -18,6 +19,15 @@ const nextStatus: Record<string, MilestoneOnChainStatus> = {
   deliver: "delivered",
   approve: "approved",
   dispute: "disputed",
+  claim_timeout: "approved",
+};
+
+const successMessage: Record<string, string> = {
+  fund: "Milestone funded.",
+  deliver: "Proof submitted.",
+  approve: "Approved — funds released.",
+  dispute: "Milestone disputed.",
+  claim_timeout: "Timeout claimed — funds released.",
 };
 
 export default function JobDetailPage({
@@ -30,7 +40,6 @@ export default function JobDetailPage({
   const { data: events } = useProofEvents(jobId);
   const { address } = useWallet();
   const [localMilestones, setLocalMilestones] = useState<Milestone[] | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
 
   const milestones = localMilestones ?? job?.milestones ?? [];
 
@@ -43,14 +52,13 @@ export default function JobDetailPage({
 
   const handleAction = async (
     index: number,
-    action: "fund" | "deliver" | "approve" | "dispute",
+    action: "fund" | "deliver" | "approve" | "dispute" | "claim_timeout",
     proofUrl?: string
   ) => {
-    setActionError(null);
-
     // Demo jobs (mock data, no on-chain job id) stay optimistic-only.
     if (!job?.onChainJobId || !address) {
       applyOptimistic(index, nextStatus[action], proofUrl);
+      toast.success(successMessage[action]);
       return;
     }
 
@@ -65,10 +73,13 @@ export default function JobDetailPage({
         await escrowContract.approveMilestone(address, onChainJobId, index);
       } else if (action === "dispute") {
         await escrowContract.disputeMilestone(address, onChainJobId, index);
+      } else if (action === "claim_timeout") {
+        await escrowContract.claimTimeoutRelease(address, onChainJobId, index);
       }
       applyOptimistic(index, nextStatus[action], proofUrl);
+      toast.success(successMessage[action]);
     } catch (e) {
-      setActionError(e instanceof Error ? e.message : "Transaction failed");
+      toast.error(e instanceof Error ? e.message : `Failed to ${action} milestone ${index + 1}`);
     }
   };
 
@@ -101,12 +112,6 @@ export default function JobDetailPage({
                 </span>
               </div>
             </motion.div>
-
-            {actionError && (
-              <p className="mt-4 rounded-lg border border-accent-amber/30 bg-accent-amber/10 px-3 py-2 text-sm text-accent-amber">
-                {actionError}
-              </p>
-            )}
 
             <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
               <div className="flex flex-col gap-5">

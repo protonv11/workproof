@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useState } from "react";
 import { connectFreighter, isFreighterInstalled } from "@/lib/wallet";
+import { toast } from "@/lib/toast-store";
 
 type WalletState = {
   address: string | null;
@@ -28,8 +29,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       }
       const addr = await connectFreighter();
       setAddress(addr);
+      toast.success("Wallet connected.");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to connect wallet");
+      const message = e instanceof Error ? e.message : "Failed to connect wallet";
+      setError(message);
+      toast.error(message);
     } finally {
       setConnecting(false);
     }

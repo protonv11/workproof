@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ShieldAlert, Upload, Wallet, ExternalLink } from "lucide-react";
+import { Check, ShieldAlert, Upload, Wallet, ExternalLink, Clock3 } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GradientButton } from "@/components/ui/GradientButton";
 import { StatusRing } from "@/components/ui/StatusRing";
@@ -14,12 +14,17 @@ export function MilestoneCard({
   onAction,
 }: {
   milestone: Milestone;
-  onAction: (action: "fund" | "deliver" | "approve" | "dispute", proofUrl?: string) => void;
+  onAction: (
+    action: "fund" | "deliver" | "approve" | "dispute" | "claim_timeout",
+    proofUrl?: string
+  ) => void;
 }) {
   const { address } = useWallet();
   const [proofUrl, setProofUrl] = useState("");
   const [releasing, setReleasing] = useState(false);
   const [showDeliverForm, setShowDeliverForm] = useState(false);
+
+  const timeoutPassed = milestone.deadline ? Date.now() > new Date(milestone.deadline).getTime() : false;
 
   const handleApprove = () => {
     setReleasing(true);
@@ -160,6 +165,16 @@ export function MilestoneCard({
                   <ShieldAlert size={14} /> Dispute
                 </GradientButton>
               </motion.div>
+              {timeoutPassed && (
+                <GradientButton
+                  variant="ghost"
+                  disabled={!address}
+                  onClick={() => onAction("claim_timeout")}
+                  className="flex items-center gap-2 text-xs"
+                >
+                  <Clock3 size={14} /> Claim timeout release
+                </GradientButton>
+              )}
             </>
           )}
 

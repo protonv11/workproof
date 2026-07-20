@@ -10,6 +10,7 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { useWallet } from "@/lib/wallet-context";
 import { escrowContract } from "@/lib/contract";
 import { NATIVE_TESTNET_TOKEN } from "@/lib/wallet";
+import { toast } from "@/lib/toast-store";
 
 type DraftMilestone = { title: string; description: string; amount: string };
 
@@ -44,12 +45,10 @@ export default function NewJobPage() {
       : true;
 
   const [creating, setCreating] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
 
   const handleCreate = async () => {
     if (!address) return;
     setCreating(true);
-    setCreateError(null);
     try {
       await escrowContract.createJob(address, {
         client: address,
@@ -59,9 +58,10 @@ export default function NewJobPage() {
         // amounts are stroops (1 XLM = 10_000_000 stroops) on the native SAC
         milestone_amounts: milestones.map((m) => BigInt(Math.round(parseFloat(m.amount) * 10_000_000))),
       });
+      toast.success("Job created on-chain.");
       router.push("/dashboard");
     } catch (e) {
-      setCreateError(e instanceof Error ? e.message : "Failed to create job on-chain");
+      toast.error(e instanceof Error ? e.message : "Failed to create job on-chain");
     } finally {
       setCreating(false);
     }
@@ -231,9 +231,6 @@ export default function NewJobPage() {
                   <p className="text-xs text-accent-amber">
                     Connect your wallet to create this job on-chain.
                   </p>
-                )}
-                {createError && (
-                  <p className="text-xs text-accent-amber">{createError}</p>
                 )}
               </motion.div>
             )}
