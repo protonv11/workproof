@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
-import { connectFreighter, isFreighterInstalled } from "@/lib/wallet";
+import { connectFreighter, isFreighterInstalled, tryRestoreFreighterSession } from "@/lib/wallet";
 import { toast } from "@/lib/toast-store";
 import { analytics } from "@/lib/analytics";
 
@@ -20,6 +20,12 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    tryRestoreFreighterSession().then((addr) => {
+      if (addr) setAddress(addr);
+    });
+  }, []);
 
   const connect = useCallback(async () => {
     setConnecting(true);

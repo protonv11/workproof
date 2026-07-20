@@ -33,6 +33,24 @@ export async function connectFreighter() {
   return addr.address;
 }
 
+/**
+ * Restores the session on mount without prompting — only succeeds if the
+ * user already granted this site access in a previous visit.
+ */
+export async function tryRestoreFreighterSession(): Promise<string | null> {
+  try {
+    const installed = await isFreighterInstalled();
+    if (!installed) return null;
+    const allowed = await isAllowed();
+    if (!allowed.isAllowed) return null;
+    const addr = await getAddress();
+    if (addr.error || !addr.address) return null;
+    return addr.address;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCurrentNetwork() {
   const network = await getNetwork();
   if (network.error) throw new Error(network.error.message ?? "Failed to get network");
