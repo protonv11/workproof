@@ -130,10 +130,10 @@ _Added once the app has real usage — see the submission checklist below._
 - [ ] Real feedback collected via the in-app flow
 - [ ] Screenshots: desktop UI, mobile views, Sentry dashboard, PostHog dashboard, feedback summary
 - [ ] Demo video: connect → create job → fund → deliver → approve → funds released
-- [ ] Live app URL added below
+- [x] Live app URL added below
 - [ ] 15+ meaningful commits (see `git log`)
 
 ## Live deployment
 
 - **Contract (testnet):** `CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX`
-- **App URL:** _pending deploy_
+- **App URL:** [workproof-two.vercel.app](https://workproof-two.vercel.app/)
