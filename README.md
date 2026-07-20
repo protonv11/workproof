@@ -122,14 +122,28 @@ On success, the modal shows a spring-physics particle-burst confirmation. On fai
 
 ### Screenshots
 
-_Added once the app has real usage — see the submission checklist below._
+**Desktop**
+
+| Landing | Job detail — live proof trail |
+|---|---|
+| ![Desktop landing page](screenshots/desktop-landing.png) | ![Desktop job detail with proof trail](screenshots/desktop-job-detail.png) |
+
+**Mobile** (375–428px, real device viewport)
+
+| Landing | Wallet connect | Dashboard |
+|---|---|---|
+| ![Mobile landing page](screenshots/mobile-landing.png) | ![Mobile Freighter connect modal](screenshots/mobile-wallet-connect.png) | ![Mobile dashboard with connected wallet](screenshots/mobile-dashboard.png) |
+
+**Demo**
+
+![Demo — connect wallet, create job, fund, deliver, approve](screenshots/demo.gif)
 
 ## Submission checklist
 
 - [ ] 10+ real users connected wallets and completed at least one testnet action
-- [ ] Real feedback collected via the in-app flow
-- [ ] Screenshots: desktop UI, mobile views, Sentry dashboard, PostHog dashboard, feedback summary
-- [ ] Demo video: connect → create job → fund → deliver → approve → funds released
+- [x] Real feedback collected via the in-app flow
+- [x] Screenshots: desktop UI, mobile views (Sentry/PostHog dashboard screenshots still needed)
+- [x] Demo video (GIF): connect → create job → fund → deliver → approve → funds released
 - [x] Live app URL added below
 - [ ] 15+ meaningful commits (see `git log`)
 
