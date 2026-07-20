@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+:root {
+  --bg-base: #0a0a12;
+  --bg-elevated: #0d0f1a;
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-fill-strong: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --accent-violet: #7c3aed;
+  --accent-cyan: #06b6d4;
+  --accent-magenta: #ec4899;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --text-primary: #f5f5fa;
+  --text-muted: #9a9ab0;
+
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-base: var(--bg-base);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-glass-fill: var(--glass-fill);
+  --color-glass-border: var(--glass-border);
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-magenta: var(--accent-magenta);
+  --color-accent-green: var(--accent-green);
+  --color-accent-amber: var(--accent-amber);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-space-grotesk);
+}
+
+body {
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124, 58, 237, 0.18), transparent),
+    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(6, 182, 212, 0.12), transparent),
+    var(--bg-base);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading), var(--font-sans), sans-serif;
+}
+
+.glass {
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan), var(--accent-magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(120deg, var(--accent-violet), var(--accent-cyan), var(--accent-magenta));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--glass-fill-strong);
+  border-radius: 8px;
+}
+
+.glass-input {
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.glass-input::placeholder {
+  color: var(--text-muted);
+}
+.glass-input:focus {
+  border-color: var(--accent-cyan);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
