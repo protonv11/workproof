@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { mockJobs, mockProofEvents } from "@/lib/mock-data";
 import type { Job, ProofEvent } from "@/lib/types";
@@ -51,4 +51,26 @@ export function useJob(jobId: string) {
 
 export function useProofEvents(jobId: string) {
   return useQuery({ queryKey: ["proof-events", jobId], queryFn: () => fetchProofEvents(jobId) });
+}
+
+type FeedbackInput = {
+  userAddress: string | null;
+  rating: number;
+  feedbackText: string;
+};
+
+async function submitFeedback(input: FeedbackInput) {
+  if (!supabase) {
+    throw new Error("Feedback isn't configured yet — Supabase env vars are missing.");
+  }
+  const { error } = await supabase.from("user_feedback").insert({
+    user_address: input.userAddress,
+    rating: input.rating,
+    feedback_text: input.feedbackText,
+  });
+  if (error) throw new Error(error.message);
+}
+
+export function useSubmitFeedback() {
+  return useMutation({ mutationFn: submitFeedback });
 }

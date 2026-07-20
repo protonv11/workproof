@@ -18,6 +18,11 @@ export const supabase = url && anonKey ? createClient(url, anonKey) : null;
  * proof_events(id uuid pk, job_id uuid references jobs, milestone_index int,
  *             type text, message text, created_at timestamptz default now())
  *
+ * user_feedback(id uuid pk default gen_random_uuid(), user_address text nullable,
+ *               rating int check (rating between 1 and 5), feedback_text text,
+ *               created_at timestamptz default now())
+ *   — see supabase/migrations/001_user_feedback.sql for the runnable migration.
+ *
  * On-chain fields (funds, status) are read from Soroban RPC via lib/contract.ts —
  * Supabase only stores descriptions, proof links, and messages.
  */

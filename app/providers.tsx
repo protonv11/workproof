@@ -5,6 +5,7 @@ import { useState } from "react";
 import { WalletProvider } from "@/lib/wallet-context";
 import { Toaster } from "@/components/ui/Toaster";
 import { PostHogProvider } from "@/components/PostHogProvider";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,6 +26,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <WalletProvider>
           {children}
           <Toaster />
+          <FeedbackWidget />
         </WalletProvider>
       </PostHogProvider>
     </QueryClientProvider>
