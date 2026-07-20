@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { connectFreighter, isFreighterInstalled } from "@/lib/wallet";
 import { toast } from "@/lib/toast-store";
 
@@ -34,6 +35,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const message = e instanceof Error ? e.message : "Failed to connect wallet";
       setError(message);
       toast.error(message);
+      Sentry.captureException(e, { tags: { flow: "wallet_connect" } });
     } finally {
       setConnecting(false);
     }

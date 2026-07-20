@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 import { motion } from "framer-motion";
+import * as Sentry from "@sentry/nextjs";
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { MilestoneCardSkeleton } from "@/components/ui/Skeleton";
@@ -80,6 +81,10 @@ export default function JobDetailPage({
       toast.success(successMessage[action]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : `Failed to ${action} milestone ${index + 1}`);
+      Sentry.captureException(e, {
+        tags: { flow: "contract_call", action },
+        extra: { jobId, onChainJobId: job.onChainJobId, milestoneIndex: index },
+      });
     }
   };
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import * as Sentry from "@sentry/nextjs";
 import { Plus, Trash2, ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -62,6 +63,10 @@ export default function NewJobPage() {
       router.push("/dashboard");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to create job on-chain");
+      Sentry.captureException(e, {
+        tags: { flow: "contract_call", action: "create_job" },
+        extra: { freelancer, milestoneCount: milestones.length },
+      });
     } finally {
       setCreating(false);
     }
