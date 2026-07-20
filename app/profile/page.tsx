@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wallet } from "lucide-react";
+import { Wallet, LogOut } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GradientButton } from "@/components/ui/GradientButton";
@@ -9,7 +9,7 @@ import { useWallet } from "@/lib/wallet-context";
 import { truncateAddress } from "@/lib/wallet";
 
 export default function ProfilePage() {
-  const { address, connect } = useWallet();
+  const { address, connect, disconnect } = useWallet();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -21,14 +21,22 @@ export default function ProfilePage() {
           <GlassCard glowBorder className="p-6">
             {address ? (
               <>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-accent-violet via-accent-cyan to-accent-magenta">
-                    <Wallet size={18} className="text-white" />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-accent-violet via-accent-cyan to-accent-magenta">
+                      <Wallet size={18} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-text-muted">Connected wallet</p>
+                      <p className="font-mono text-sm">{truncateAddress(address, 6)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-text-muted">Connected wallet</p>
-                    <p className="font-mono text-sm">{truncateAddress(address, 6)}</p>
-                  </div>
+                  <button
+                    onClick={disconnect}
+                    className="flex items-center gap-1.5 rounded-full border border-glass-border px-3 py-1.5 text-xs text-text-muted hover:text-accent-amber hover:border-accent-amber/40 transition-colors"
+                  >
+                    <LogOut size={13} /> Disconnect
+                  </button>
                 </div>
                 <p className="mt-4 text-xs text-text-muted">Network: Stellar Testnet</p>
               </>

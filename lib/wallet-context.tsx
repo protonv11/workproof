@@ -15,6 +15,7 @@ type WalletState = {
 };
 
 const WalletContext = createContext<WalletState | null>(null);
+const DISCONNECTED_FLAG = "workproof:wallet-disconnected";
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
@@ -22,6 +23,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (localStorage.getItem(DISCONNECTED_FLAG)) return;
     tryRestoreFreighterSession().then((addr) => {
       if (addr) setAddress(addr);
     });
@@ -36,6 +38,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Freighter wallet not detected. Install it from freighter.app.");
       }
       const addr = await connectFreighter();
+      localStorage.removeItem(DISCONNECTED_FLAG);
       setAddress(addr);
       toast.success("Wallet connected.");
       analytics.walletConnected(addr);
@@ -50,7 +53,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const disconnect = useCallback(() => {
+    localStorage.setItem(DISCONNECTED_FLAG, "1");
     setAddress(null);
+    toast.success("Wallet disconnected.");
   }, []);
 
   return (

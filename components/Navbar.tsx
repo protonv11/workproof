@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Zap, Menu, X } from "lucide-react";
+import { Zap, Menu, X, LogOut } from "lucide-react";
 import { useWallet } from "@/lib/wallet-context";
 import { truncateAddress } from "@/lib/wallet";
 import { WalletConnectModal } from "@/components/WalletConnectModal";
 import { GradientButton } from "@/components/ui/GradientButton";
 
 export function Navbar() {
-  const { address } = useWallet();
+  const { address, disconnect } = useWallet();
   const [modalOpen, setModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -40,12 +40,21 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           {address ? (
-            <Link
-              href="/profile"
-              className="rounded-full border border-glass-border bg-glass-fill px-3 py-1.5 text-xs text-accent-cyan sm:px-4 sm:text-sm"
-            >
-              {truncateAddress(address)}
-            </Link>
+            <div className="flex items-center gap-1.5">
+              <Link
+                href="/profile"
+                className="rounded-full border border-glass-border bg-glass-fill px-3 py-1.5 text-xs text-accent-cyan sm:px-4 sm:text-sm"
+              >
+                {truncateAddress(address)}
+              </Link>
+              <button
+                onClick={disconnect}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:text-accent-amber transition-colors"
+                aria-label="Disconnect wallet"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
           ) : (
             <GradientButton onClick={() => setModalOpen(true)} className="!px-3 !py-1.5 text-xs sm:!px-4">
               Connect Wallet
