@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { WalletProvider } from "@/lib/wallet-context";
 import { Toaster } from "@/components/ui/Toaster";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -20,10 +21,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WalletProvider>
-        {children}
-        <Toaster />
-      </WalletProvider>
+      <PostHogProvider>
+        <WalletProvider>
+          {children}
+          <Toaster />
+        </WalletProvider>
+      </PostHogProvider>
     </QueryClientProvider>
   );
 }

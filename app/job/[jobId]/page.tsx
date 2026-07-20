@@ -13,6 +13,7 @@ import { truncateAddress } from "@/lib/wallet";
 import { useWallet } from "@/lib/wallet-context";
 import { escrowContract } from "@/lib/contract";
 import { toast } from "@/lib/toast-store";
+import { analytics } from "@/lib/analytics";
 import type { Milestone, MilestoneOnChainStatus } from "@/lib/types";
 
 const nextStatus: Record<string, MilestoneOnChainStatus> = {
@@ -56,10 +57,19 @@ export default function JobDetailPage({
     action: "fund" | "deliver" | "approve" | "dispute" | "claim_timeout",
     proofUrl?: string
   ) => {
+    const trackAction = () => {
+      const amount = milestones[index]?.amount ?? 0;
+      if (action === "fund") analytics.milestoneFunded(jobId, index, amount);
+      else if (action === "deliver") analytics.milestoneDelivered(jobId, index);
+      else if (action === "approve" || action === "claim_timeout") analytics.milestoneApproved(jobId, index);
+      else if (action === "dispute") analytics.milestoneDisputed(jobId, index);
+    };
+
     // Demo jobs (mock data, no on-chain job id) stay optimistic-only.
     if (!job?.onChainJobId || !address) {
       applyOptimistic(index, nextStatus[action], proofUrl);
       toast.success(successMessage[action]);
+      trackAction();
       return;
     }
 
@@ -79,6 +89,7 @@ export default function JobDetailPage({
       }
       applyOptimistic(index, nextStatus[action], proofUrl);
       toast.success(successMessage[action]);
+      trackAction();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : `Failed to ${action} milestone ${index + 1}`);
       Sentry.captureException(e, {

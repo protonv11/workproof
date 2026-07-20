@@ -12,6 +12,7 @@ import { useWallet } from "@/lib/wallet-context";
 import { escrowContract } from "@/lib/contract";
 import { NATIVE_TESTNET_TOKEN } from "@/lib/wallet";
 import { toast } from "@/lib/toast-store";
+import { analytics } from "@/lib/analytics";
 
 type DraftMilestone = { title: string; description: string; amount: string };
 
@@ -60,6 +61,7 @@ export default function NewJobPage() {
         milestone_amounts: milestones.map((m) => BigInt(Math.round(parseFloat(m.amount) * 10_000_000))),
       });
       toast.success("Job created on-chain.");
+      analytics.jobCreated(milestones.length, total);
       router.push("/dashboard");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to create job on-chain");

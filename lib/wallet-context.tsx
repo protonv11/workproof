@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { connectFreighter, isFreighterInstalled } from "@/lib/wallet";
 import { toast } from "@/lib/toast-store";
+import { analytics } from "@/lib/analytics";
 
 type WalletState = {
   address: string | null;
@@ -31,6 +32,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const addr = await connectFreighter();
       setAddress(addr);
       toast.success("Wallet connected.");
+      analytics.walletConnected(addr);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to connect wallet";
       setError(message);
