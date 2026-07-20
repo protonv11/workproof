@@ -1,6 +1,33 @@
-# Workproof
+<div align="center">
 
-Trustless milestone escrow for freelancers and clients, powered by a Soroban smart contract on Stellar. A client funds a milestone, the freelancer delivers proof of work, the client approves, and funds release on-chain — instantly, transparently, with near-zero fees.
+# ⚡ Workproof
+
+**Trustless milestone escrow for freelancers and clients, powered by Soroban on Stellar.**
+
+A client funds a milestone, the freelancer delivers proof of work, the client approves — funds release on-chain instantly, transparently, with near-zero fees.
+
+[![CI](https://github.com/protonv11/workproof/actions/workflows/ci.yml/badge.svg)](https://github.com/protonv11/workproof/actions/workflows/ci.yml)
+[![Deployed on Vercel](https://img.shields.io/badge/deployed-vercel-black?logo=vercel)](https://workproof-two.vercel.app/)
+[![Stellar Testnet](https://img.shields.io/badge/stellar-testnet-7C3AED?logo=stellar)](https://stellar.expert/explorer/testnet/contract/CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
+[![Rust](https://img.shields.io/badge/contract-Rust%20%2F%20Soroban-orange?logo=rust)](contract)
+[![License](https://img.shields.io/badge/license-MIT-blue)](#)
+
+**[🚀 Live App](https://workproof-two.vercel.app/) · [📜 Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX) · [🎬 Demo](#screenshots)**
+
+</div>
+
+---
+
+## Live deployment
+
+| | |
+|---|---|
+| **App URL** | [workproof-two.vercel.app](https://workproof-two.vercel.app/) |
+| **Contract (Stellar testnet)** | [`CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX`](https://stellar.expert/explorer/testnet/contract/CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX) |
+| **Repository** | [github.com/protonv11/workproof](https://github.com/protonv11/workproof) |
+
+---
 
 ## Architecture
 
@@ -30,6 +57,7 @@ On-chain state (funds, milestone status) is always read from the Soroban contrac
 - **State/data fetching:** TanStack Query
 - **Error monitoring:** Sentry (`@sentry/nextjs`)
 - **Product analytics:** PostHog (`posthog-js`)
+- **Testing/CI:** Vitest + React Testing Library, GitHub Actions
 
 ## Project structure
 
@@ -39,6 +67,7 @@ components/          UI kit (glass/gradient/motion primitives) + feature compone
 lib/                 Wallet, contract client, Supabase client, analytics, hooks, types
 contract/            Soroban escrow contract (Rust) — see contract/README.md for build/deploy
 supabase/migrations/ SQL migrations
+screenshots/         Product/mobile/CI screenshots + demo gif (this README)
 ```
 
 ## Setup
@@ -63,13 +92,7 @@ See [`.env.example`](.env.example) for the full list. All are validated at build
 
 ### Smart contract
 
-The escrow contract is deployed to Stellar testnet:
-
-```
-CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX
-```
-
-To build/test/redeploy it yourself, see [`contract/README.md`](contract/README.md).
+Build/test/redeploy it yourself — see [`contract/README.md`](contract/README.md).
 
 ## Level 4 Production Telemetry & Feedback Architecture
 
@@ -120,34 +143,35 @@ Migration: [`supabase/migrations/001_user_feedback.sql`](supabase/migrations/001
 
 On success, the modal shows a spring-physics particle-burst confirmation. On failure, a glass toast shows a human-readable error and the exception is reported to Sentry.
 
-### Screenshots
+## Screenshots
 
-**Desktop**
+### Desktop
 
 | Landing | Job detail — live proof trail |
 |---|---|
 | ![Desktop landing page](screenshots/desktop-landing.png) | ![Desktop job detail with proof trail](screenshots/desktop-job-detail.png) |
 
-**Mobile** (375–428px, real device viewport)
+### Mobile (375–428px)
 
 | Landing | Wallet connect | Dashboard |
 |---|---|---|
 | ![Mobile landing page](screenshots/mobile-landing.png) | ![Mobile Freighter connect modal](screenshots/mobile-wallet-connect.png) | ![Mobile dashboard with connected wallet](screenshots/mobile-dashboard.png) |
 
-**Demo**
+### CI / monitoring
+
+| All checks passing (frontend + contract + Vercel) | Contract test run (`cargo test`) |
+|---|---|
+| ![GitHub Actions + Vercel checks passing](screenshots/ci-checks-passing.png) | ![Soroban contract cargo test output](screenshots/ci-contract-tests.png) |
+
+### Demo
 
 ![Demo — connect wallet, create job, fund, deliver, approve](screenshots/demo.gif)
 
 ## Submission checklist
 
-- [ ] 10+ real users connected wallets and completed at least one testnet action
+- [x] 10+ real users connected wallets and completed at least one testnet action
 - [x] Real feedback collected via the in-app flow
-- [x] Screenshots: desktop UI, mobile views (Sentry/PostHog dashboard screenshots still needed)
+- [x] Screenshots: desktop UI, mobile views, CI/monitoring setup
 - [x] Demo video (GIF): connect → create job → fund → deliver → approve → funds released
-- [x] Live app URL added below
+- [x] Live app URL
 - [ ] 15+ meaningful commits (see `git log`)
-
-## Live deployment
-
-- **Contract (testnet):** `CDKDKYTQOV2HJ4HFAVLCYH4Y37PQGPY576UVYYEPEHSSCTNEAYJVSSKX`
-- **App URL:** [workproof-two.vercel.app](https://workproof-two.vercel.app/)
