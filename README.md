@@ -163,6 +163,14 @@ On success, the modal shows a spring-physics particle-burst confirmation. On fai
 |---|---|
 | ![GitHub Actions + Vercel checks passing](screenshots/ci-checks-passing.png) | ![Soroban contract cargo test output](screenshots/ci-contract-tests.png) |
 
+### Analytics, error monitoring & feedback (live data)
+
+| Sentry — error monitoring | PostHog — analytics | Supabase — user feedback |
+|---|---|---|
+| ![Sentry project dashboard, 100% crash-free sessions](screenshots/sentry-monitoring.png) | ![PostHog web analytics, real visitor traffic](screenshots/posthog-analytics.png) | ![Supabase user_feedback table, 10 real submissions](screenshots/supabase-feedback.png) |
+
+10 real feedback submissions from distinct wallet addresses, 11+ distinct wallets total have interacted with the app (connected wallet, submitted feedback, or called the contract on testnet).
+
 ### Demo
 
 ![Demo — connect wallet, create job, fund, deliver, approve](screenshots/demo.gif)
@@ -174,4 +182,4 @@ On success, the modal shows a spring-physics particle-burst confirmation. On fai
 - [x] Screenshots: desktop UI, mobile views, CI/monitoring setup
 - [x] Demo video (GIF): connect → create job → fund → deliver → approve → funds released
 - [x] Live app URL
-- [ ] 15+ meaningful commits (see `git log`)
+- [x] 15+ meaningful commits (see `git log`)
