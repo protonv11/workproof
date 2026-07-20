@@ -8,13 +8,13 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { MilestoneCardSkeleton } from "@/components/ui/Skeleton";
 import { MilestoneCard } from "@/components/MilestoneCard";
 import { ProofTrail } from "@/components/ProofTrail";
-import { useJob, useProofEvents } from "@/lib/hooks";
+import { useJob, useProofEvents, useUpdateMilestone } from "@/lib/hooks";
 import { truncateAddress } from "@/lib/wallet";
 import { useWallet } from "@/lib/wallet-context";
 import { escrowContract } from "@/lib/contract";
 import { toast } from "@/lib/toast-store";
 import { analytics } from "@/lib/analytics";
-import type { Milestone, MilestoneOnChainStatus } from "@/lib/types";
+import type { Milestone, MilestoneOnChainStatus, ProofEvent } from "@/lib/types";
 
 const nextStatus: Record<string, MilestoneOnChainStatus> = {
   fund: "funded",
@@ -32,6 +32,14 @@ const successMessage: Record<string, string> = {
   claim_timeout: "Timeout claimed — funds released.",
 };
 
+const eventType: Record<string, ProofEvent["type"]> = {
+  fund: "funded",
+  deliver: "delivered",
+  approve: "approved",
+  dispute: "disputed",
+  claim_timeout: "timeout_released",
+};
+
 export default function JobDetailPage({
   params,
 }: {
@@ -42,6 +50,7 @@ export default function JobDetailPage({
   const { data: events } = useProofEvents(jobId);
   const { address } = useWallet();
   const [localMilestones, setLocalMilestones] = useState<Milestone[] | null>(null);
+  const updateMilestoneRecord = useUpdateMilestone();
 
   const milestones = localMilestones ?? job?.milestones ?? [];
 
@@ -90,6 +99,13 @@ export default function JobDetailPage({
       applyOptimistic(index, nextStatus[action], proofUrl);
       toast.success(successMessage[action]);
       trackAction();
+      updateMilestoneRecord.mutate({
+        jobId: job.id,
+        milestoneIndex: index,
+        status: nextStatus[action],
+        proofUrl,
+        eventType: eventType[action],
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : `Failed to ${action} milestone ${index + 1}`);
       Sentry.captureException(e, {

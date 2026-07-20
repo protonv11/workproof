@@ -50,7 +50,7 @@ export const escrowContract = {
     return withBreadcrumb("create_job", async () => {
       const tx = await client(source).create_job(args);
       const sent = await tx.signAndSend();
-      return sent.result;
+      return sent.result.unwrap();
     });
   },
 

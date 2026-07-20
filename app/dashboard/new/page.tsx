@@ -13,6 +13,7 @@ import { escrowContract } from "@/lib/contract";
 import { NATIVE_TESTNET_TOKEN } from "@/lib/wallet";
 import { toast } from "@/lib/toast-store";
 import { analytics } from "@/lib/analytics";
+import { useCreateJob } from "@/lib/hooks";
 
 type DraftMilestone = { title: string; description: string; amount: string };
 
@@ -47,12 +48,13 @@ export default function NewJobPage() {
       : true;
 
   const [creating, setCreating] = useState(false);
+  const createJobRecord = useCreateJob();
 
   const handleCreate = async () => {
     if (!address) return;
     setCreating(true);
     try {
-      await escrowContract.createJob(address, {
+      const onChainJobId = await escrowContract.createJob(address, {
         client: address,
         freelancer,
         token: NATIVE_TESTNET_TOKEN,
@@ -60,6 +62,20 @@ export default function NewJobPage() {
         // amounts are stroops (1 XLM = 10_000_000 stroops) on the native SAC
         milestone_amounts: milestones.map((m) => BigInt(Math.round(parseFloat(m.amount) * 10_000_000))),
       });
+
+      await createJobRecord.mutateAsync({
+        onChainJobId: onChainJobId.toString(),
+        title,
+        description,
+        clientAddress: address,
+        freelancerAddress: freelancer,
+        milestones: milestones.map((m) => ({
+          title: m.title,
+          description: m.description,
+          amount: parseFloat(m.amount),
+        })),
+      });
+
       toast.success("Job created on-chain.");
       analytics.jobCreated(milestones.length, total);
       router.push("/dashboard");
