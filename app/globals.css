@@ -57,6 +57,14 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+@media (max-width: 640px) {
+  /* Stacked blur layers are expensive on mobile Safari/Chrome — trim the radius. */
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
 .gradient-text {
   background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan), var(--accent-magenta));
   -webkit-background-clip: text;

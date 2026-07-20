@@ -16,6 +16,18 @@ function useReducedMotion() {
   return reduced;
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    setMobile(mq.matches);
+    const listener = () => setMobile(mq.matches);
+    mq.addEventListener("change", listener);
+    return () => mq.removeEventListener("change", listener);
+  }, []);
+  return mobile;
+}
+
 function DriftingShapes({ reduced }: { reduced: boolean }) {
   const group = useRef<THREE.Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
@@ -86,14 +98,15 @@ function DriftingShapes({ reduced }: { reduced: boolean }) {
 
 export function HeroScene() {
   const reduced = useReducedMotion();
+  const mobile = useIsMobile();
 
   return (
     <div className="pointer-events-none absolute inset-0 opacity-70">
       <Canvas
-        dpr={[1, 1.5]}
+        dpr={mobile ? 1 : [1, 1.5]}
         frameloop={reduced ? "demand" : "always"}
         camera={{ position: [0, 0, 6], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: !mobile, alpha: true, powerPreference: mobile ? "low-power" : "default" }}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.6} />
